@@ -1,5 +1,114 @@
 const str: string[] = ["eat","tea","tan","ate","nat","bat"];
-console.log(groupAnagrams(str));
+const nums: number[] = [1,2,3,4,5];
+
+console.log(binarysearch(nums, 3))
+const num: string[] = undefined;
+if(num.length){
+  console.log(num.length)
+}
+
+// time: log(n) | space: O(1)
+function binarysearch(nums: number[], target: number): number {
+  let low: number = 0;
+  let high: number = nums.length - 1;
+  
+  while(low <= high){
+    let mid: number = low + Math.floor((high - low) / 2)
+    // [1,2,3,4,5]
+    // mid = 2
+    if(target === nums[mid]){
+      return mid;
+    }
+    else if (target < nums[mid]) {
+      high = mid - 1;  
+    }
+    else{
+      low = mid + 1;
+    }
+  }
+  
+  return -1;
+};
+
+function maxSlidingWindow(nums: number[], k: number): number[] {
+    const maxArray: number[] = [];
+    let left: number = 0;
+
+    for(let i = k; i <= nums.length; i++){
+      console.log(nums)
+      let currWindow: number[] = nums.slice(left, i)
+      console.log(currWindow);
+      console.log(k)
+      let currMax = currWindow.toSorted((a, b) => a - b)[k - 1];
+      console.log(currMax);
+      maxArray.push(currMax);
+      left++
+    }
+
+    return maxArray;
+};
+
+function calPoints(operations: string[]): number {
+  let stack = [];
+
+  for(let i = 0; i < operations.length; i++){
+      const operation: string = operations[i];
+      const stackLength: number =  stack.length;
+
+      if(operation === '+'){
+          stack.push(parseInt(stack[stackLength - 2]) + parseInt(stack[stackLength - 1]));
+      }else if(operation === 'D'){
+          stack.push(parseInt(stack[stackLength - 1]) * 2)
+      }else if (operation === 'C'){
+          stack.pop();
+      }else{
+          stack.push(operation);
+      }
+  }
+
+  let sum: number = 0;
+
+  if(stack.length === 0){
+    return sum;
+  }
+
+  sum = stack.map((x) => parseInt(x)).reduce((x, y) => x + y, 0);
+  return sum;
+};
+
+function numRescueBoats(people: number[], limit: number): number {
+    let boats: number = 0;
+    const sorted = people.sort((a, b) => a - b);
+
+    let left: number = 0, right: number = people.length - 1;
+
+    while (left <= right){
+      if(people[left] + people[right] <= limit){
+        left++;
+      }
+      right--;
+      boats++
+    }
+    
+    return boats
+};
+
+function mergeAlternately(word1: string, word2: string): string {
+  const word1Length = word1.length;
+  const word2Length = word2.length;
+  
+  let largestLength: number = Math.max(word1Length, word2Length);
+  
+  let i: number = 0;
+  const newStrArray: string[] = [];
+  while(i < largestLength){
+    if(i < word1Length) newStrArray.push(word1[i]);
+    if(i < word2Length) newStrArray.push(word2[i]);
+    i++;
+  }
+  
+  return newStrArray.join("");
+};
 
 function groupAnagrams(strs: string[]): string[][] {
     const len: number = strs.length;
@@ -15,7 +124,7 @@ function groupAnagrams(strs: string[]): string[][] {
     // time: O(n * klog(k))
     // space: O(n * k) because we create a temporary O(k) array during sorting. While the map and output are O(n) roughly. When thinking about space we think of references. 
     while (i < len){  // looping through n strs which will take O(n) time
-      const sorted_anagram: string = strs[i].split('').sort().join(''); // sort takes O(k * log(k))
+      const sorted_anagram: string = strs[i].split('').sort().join(); // sort takes O(k * log(k))
       if(map.has(sorted_anagram)){
         const anagram_array: string[] = map.get(sorted_anagram)
         anagram_array.push(strs[i]);
@@ -30,7 +139,7 @@ function groupAnagrams(strs: string[]): string[][] {
     for(const value of map.values()){
       output.push(value)
     }
-
+    // can do [...map.values()]
     return output;
 };
 
@@ -113,4 +222,92 @@ function getConcatenation(nums: number[]): number[] {
     return ans;
 };
 
+class MyStack<T> {
+  private stack: T[];
+  
+  constructor() {
+      this.stack = [];
+  }
 
+  push(x: T): void {
+      this.stack.push(x);
+  }
+
+  pop(): T {
+      if(this.stack.length !== 0){
+        return this.stack.pop()!;
+      }
+  }
+
+  top(): T {
+      return this.stack[this.stack.length - 1];
+  }
+
+  empty(): boolean {
+      return this.stack.length === 0;
+  }
+}
+
+const stack: MyStack<string> = new MyStack();
+
+// stack.push('2')
+// stack.push("hello")
+// console.log(stack.top())
+// console.log(stack.empty())
+// stack.pop()
+// stack.pop()
+// stack.pop()
+// stack.pop()
+// console.log(stack)
+
+
+class TimeMap {
+  private timeMap: Map<string, timeMapDataArray>;
+  
+  constructor() {
+      this.timeMap = new Map<string, timeMapDataArray>();
+  }
+
+  set(key: string, value: string, timestamp: number): void {
+    const data: timeMapData = {
+      timestamp,
+      value
+    };
+
+    const existingArray: timeMapDataArray = this.timeMap.get(key) ?? [];
+    existingArray.push(data);
+    this.timeMap.set(key, existingArray);
+  }
+
+  get(key: string, timestamp: number): string {
+      const dataArray: timeMapDataArray = this.timeMap.get(key) ?? [];
+      if(dataArray.length === 0 || timestamp < dataArray[0].timestamp) return "";
+      return search(dataArray, timestamp);
+  }
+}
+
+function search(array: timeMapDataArray,timestamp: number) : string {
+  let low = 0;
+  let high = array.length - 1;
+  let mid: number;
+
+  while(low <= high){
+    mid = low + Math.floor((high - low) / 2);
+    if(array[mid].timestamp === timestamp){
+      return array[mid].value;
+    }else if (array[mid].timestamp < timestamp){
+      low = mid + 1;
+    }else{
+      high = mid - 1
+    }
+  }
+
+  return array[high]?.value ?? ""
+}
+
+interface timeMapData {
+  readonly timestamp: number;
+  readonly value: string;
+}
+
+type timeMapDataArray = timeMapData[];
