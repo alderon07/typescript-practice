@@ -2,10 +2,31 @@ const str: string[] = ["eat","tea","tan","ate","nat","bat"];
 const nums: number[] = [1,2,3,4,5];
 
 console.log(binarysearch(nums, 3))
-const num: string[] = undefined;
-if(num.length){
-  console.log(num.length)
-}
+function hasCycle(head: ListNode | null): boolean {
+  const set = new Set<ListNode>;
+
+  while(head !== null){
+    if(set.has(head)) return true;
+      set.add(head)
+      head = head.next
+    }
+
+    return false;
+};
+
+function reverseList(head: ListNode | null): ListNode | null {
+  let curr = head;
+  let prev = null;
+
+  while (curr !== null) {
+      let temp = curr.next;
+      curr.next = prev
+      
+      prev = curr
+      curr = temp;
+  }
+  return prev;
+};
 
 // time: log(n) | space: O(1)
 function binarysearch(nums: number[], target: number): number {
@@ -259,7 +280,14 @@ const stack: MyStack<string> = new MyStack();
 // stack.pop()
 // stack.pop()
 // console.log(stack)
-
+class ListNode {
+    val: number
+    next: ListNode | null
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val===undefined ? 0 : val)
+        this.next = (next===undefined ? null : next)
+    }
+}
 
 class TimeMap {
   private timeMap: Map<string, timeMapDataArray>;
@@ -275,7 +303,7 @@ class TimeMap {
     };
 
     const existingArray: timeMapDataArray = this.timeMap.get(key) ?? [];
-    existingArray.push(data);
+    existingArray.push(data);             // in-place push is more efficient than spreading
     this.timeMap.set(key, existingArray);
   }
 
@@ -311,3 +339,51 @@ interface timeMapData {
 }
 
 type timeMapDataArray = timeMapData[];
+
+class MinStack {
+  private stack: number[];
+  private minStack: number[];
+  
+  constructor() {
+      this.minStack = [];
+      this.stack = [];
+  }
+
+  push(val: number): void {
+      if(!this.isEmpty()){
+        this.minStack.push(Math.min(this.minStack[this.minStack.length - 1], val))
+      }else{
+        this.minStack.push(val)
+      }
+      this.stack.push(val)
+  }
+
+  pop(): void {
+      this.stack.pop()
+      this.minStack.pop()
+  }
+
+  top(): number {
+      return this.stack[this.stack.length - 1]
+  }
+
+  isEmpty(): boolean{
+    return this.stack.length <= 0
+  }
+
+  getMin(): number {
+    return this.minStack[this.minStack.length - 1];
+  }
+}
+
+var obj = new MinStack()
+obj.push(6)
+obj.push(1)
+obj.push(2)
+console.log(obj)
+obj.pop()
+console.log(obj)
+var param_3 = obj.top()
+var param_4 = obj.getMin()
+
+console.log(obj)
