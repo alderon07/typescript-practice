@@ -2,6 +2,36 @@ const str: string[] = ["eat","tea","tan","ate","nat","bat"];
 const nums: number[] = [1,2,3,4,5];
 
 console.log(binarysearch(nums, 3))
+
+
+
+function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+  // list1 1 -> 2 -> 4
+  // list2 2 -> 3
+  // result 1 -> 2 -> 2 -> 3 -> 4 
+  // time: O(n + m), space: O(1)
+  if(list1 === null) return list2;
+  if(list2 === null) return list1;
+  
+  let dummy = new ListNode(-1);
+  let tail = dummy;
+  
+  while(list1 !== null && list2 !== null) {
+    if(list1.val <= list2.val) {
+      tail.next = list1;
+      list1 = list1.next;
+    } else {
+      tail.next = list2;
+      list2 = list2.next;
+    }
+    tail = tail.next;
+  }
+
+  // append the list that is not null
+  tail.next = list1 || list2;
+  return dummy.next;
+}
+
 function hasCycle(head: ListNode | null): boolean {
   const set = new Set<ListNode>;
 
@@ -10,7 +40,6 @@ function hasCycle(head: ListNode | null): boolean {
       set.add(head)
       head = head.next
     }
-
     return false;
 };
 
